@@ -1,0 +1,2 @@
+kyber-crystals-rfid-project/RISCOSPi.5.30.zip filter=lfs diff=lfs merge=lfs -text
+kyber-crystals-rfid-project/RISCOSPi.5.30/*.img filter=lfs diff=lfs merge=lfs -text

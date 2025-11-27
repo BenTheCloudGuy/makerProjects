@@ -1,0 +1,6 @@
+kyber-crystals-rfid-project/RISCOSPi.5.30.zip
+kyber-crystals-rfid-project/RISCOSPi.5.30/*.img
+# Exclude large RISCOS files
+kyber-crystals-rfid-project/RISCOSPi.5.30.zip
+kyber-crystals-rfid-project/RISCOSPi.5.30/*.img
+kyber-crystals-rfid-project/RISCOSPi.5.30/ro530-1875M.img
