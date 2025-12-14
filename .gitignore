@@ -4,3 +4,7 @@ kyber-crystals-rfid-project/RISCOSPi.5.30/*.img
 kyber-crystals-rfid-project/RISCOSPi.5.30.zip
 kyber-crystals-rfid-project/RISCOSPi.5.30/*.img
 kyber-crystals-rfid-project/RISCOSPi.5.30/ro530-1875M.img
+# Exclude backup folders and large Excel files
+*-backup/
+*.xlsx
+KYBER-CRYSTALS/galaxys-edge-markdown-backup/
