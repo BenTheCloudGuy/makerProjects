@@ -1,0 +1,580 @@
+# Savis Workshop Chassis Hardware
+
+- 
+- Microcontroller PCB
+- 
+- 
+- Link to High Resolution Copies
+- * There is at least one other PCB revision for this PCB which has slightly different component layout, but the test points are all in the same location
+- 
+- Known PCB Revisions
+- * 2018-11-02
+- * 2019-01-18
+- * 2019-04-04
+- * 2022-08-30
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- Reference Designator Marking, Datasheet Manufacturer What Is It? What Does It Do?
+- U1 Unknown Microcontroller
+- U2 U1RJ MicroOne Voltage Regulator Provides 3.3V from battery power
+- U3 OP2 22 Kionix Accelerometer Measures acceleration, allowing the microcontroller to know when the lightsaber is swung or stops suddenly
+- U4 NM5VA DC/DC Boost Converter Provides 5V for the EM4095 chip; Holocrons use the exact same regulator for their EM4095 chip
+- U5 EM4095 EM MicroElectronic RFID Base Station Reads RFID tags in kyber crystals and transmits that value to the microcontroller
+- 
+- R72 10R Resistor some kind of current limiter for the accelerometer?
+- R68 10K Resistor current limiter between mcu and enable pin of U4
+- R67 Resistor used to set output voltage of DC-DC boost converter U4
+- R66 Resistor used to set output voltage of DC-DC boost converter U4
+- 
+- L2, L3 Inductor filter for the speaker
+- L4 2R2 2.2uH Inductor part of DC-DC boost converter (U14) circuitry
+- 
+- D11 Silicon Diode in series with blade data; overvoltage protection? current limiter? not sure...
+- D12 MBR120V or HSJ Schottky Diode part of DC-DC boost converter (U14) circuitry
+- 
+- Q1 J6 S9014 NPN Transistor MCU driver of EM4905 SHD pin (14)
+- Q2 J6 S9014 NPN Transistor part of MCU driver of EM4905 MOD pin (12)
+- Q4 Y2 SS8550 PNP Transistor MCU driver of voltage to RGB LEDs on top side of chassis (that blink when you insert a kyber crystal)
+- Q8 Y2 SS8550 PNP Transistor part of MCU driver of EM4905 MOD pin (12)
+- 
+- Pinouts of Key ICs
+- 
+- U2 Pin Purpose U3 Pin Connected To U4 Pin Purpose/Connected To
+- 1.0 GND 1.0 microcontroller 1.0 Switch
+- 2.0 Vout 2.0 microcontroller 2.0 GND
+- 3.0 Vin 3.0 Vin 3.0 Feedback
+- 4.0 GND 4.0 GND
+- 5.0 n/c 5.0 Enable
+- ` 6.0 n/c 6.0 Vout
+- 7.0 Vin (via R72; 10R)
+- 8.0 GND
+- 9.0 GND
+- 10.0 microcontroller
+- 11.0 GND
+- 12.0 microcontroller
+- 
+- 
+- Crystal Insertion Switch PCB; Top Side of Chassis
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- PCB located above crystal chamber.
+- Contains RGB LEDs that light up when a crystal is inserted into the chassis.
+- Contains a microswitch used to detect when a crystal has been inserted.
+- Includes a ribbon cable connector (P1) which connects the to the microcontroller PCB.
+- 
+- The (cathode) R, G, B pins of all three LEDs are tied together and driven by a single transistor.
+- Q5 = Red, Q6 = Green, Q7 = Blue
+- 
+- Crystal switch is attached to 3V (power); so a high signal on "A3" indicates a crystal has been inserted.
+- 
+- P1 Pinout
+- Bottom most pin (relative to the image above) will be designated as Pin 1.
+- Pin order is reversed on the microcontroller PCB.
+- Cable connecting the two is a 0.5mm pitch, 8-pin, forward-direction flat-flex cable (FFC).
+- 
+- Pin Purpose
+- 1.0 Ground
+- 2.0 Blade Data
+- 3.0 Crystal Insertion Switch; "A3"
+- 4.0 LED Power
+- 5.0 Red LED Driver
+- 6.0 Green LED Driver
+- 7.0 Blue LED Driver
+- 8.0 Power
+- 
+- 
+- 
+- Kionix Accelerometer
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- TRIG, INT1, INT2 are connected to GND.
+- Probably 4-wire SPI (SCLK/SCL, SDO/ADDR, SDI/SDA, nCS are all connected to the microcontroller)
+- There are no available test pads for those wires; to sniff the data would require very small wires being soldered to exposed traces or maybe insert the wires to solder joints of the pins
+- 
+- Detecting movement is done by reading register values over the SPI interface.
+- Sniffing the SPI interface would tell us how often the microcontroller is reading the chip (50 times a second is the default)
+- The lag in response is probably in the microcontroller and how it tests for movement events and triggers audio and clash effects.
+- 
+- Uncertain which Kionix chip this is; could be KX022, KX122, or KX222
+- The KX222 has a minimum +/- 8G sensitivity. The other two have a minimum +/- 2G sensitivity.
+- 8G seems high for this sort of application, so it's probably one of the other two.
+- KX122 seems to be the cheapest, but that may be due to surplus.
+- Difference between KX022 and KX122 seems to be KX122 includes a feature to detect free fall (which is probably not used by the blade)
+- 
+- Information and Datasheets
+- KX022
+- KX122
+- KX222
+- 
+- Newer Kionix accelerometers that are pin-compatible with this one exist, however they can't be used as the addresses for the
+- registers the microcontroller reads information from are different with the newer ICs. With the newer ICs the MCU would
+- be reading information from the wrong registers and not function as it normally would.
+- 
+- 
+- Lightsaber Activation Switch PCB; Bottom Side of Chassis
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- PCB located in bottom half of chassis, just below RFID antenna.
+- Contains a single RGB LED used to illuminate crystal chamber from below.
+- Contains a hall effect (magnetic field) sensor that detects when the lightsaber switch is in the ON position.
+- Q1 is a PNP transistor being used to drive the signal from the hall effect sensor to the microcontroller PCB. It also inverts the signal coming out of the hall effect sensor before sending it to the microcontroller.
+- U6, marked 'UBBG', is the hall effect sensor.
+- The pair of exposed pads next to the black silkscreen text "OUT" appear to be meant as a way to connect the hall effect sensor to the microcontroller without using Q1 to drive the signal. Shorting these pads (and removing Q1) would also uninvert the signal.
+- Resistor Values (on WHITE PCB): R1: 470k, R100: 100, R101: 100, R102: 150, R111: unpopulated
+- Q1 Pinout: 1 = Base, 2 = Emitter, 3 = Collector
+- 
+- Current limiting resistors for the RGB LED in the middle
+- R100 = Green = 100 ohms
+- R101 = Blue = 100 ohms
+- R102 = Red = 150 ohms
+- 
+- Possble LED replacements
+- https://www.mouser.com/ProductDetail/630-HSMF-C114
+- https://www.mouser.com/ProductDetail/604-APTF1616SEEZGQBD
+- 
+- 
+- 
+- P2 Pinout
+- Right-most pin (relative to the middle image above) will be designated as Pin 1.
+- Pin order is reversed on the microcontroller PCB.
+- Cable connecting the two is a 0.5mm pitch, 8-pin, forward-direction flat-flex cable (FFC).
+- 
+- Pin Purpose
+- 1.0 "A2" is connected to 3.3V (power)
+- 2.0 Saber Ignite Signal; from hall effect sensor U6 via PNP transistor Q1
+- 3.0 "A0" goes to MCU
+- 4.0 GND
+- 5.0 Red LED channel
+- 6.0 Green LED channel
+- 7.0 Blue LED channel
+- 8.0 Power
+- 
+- unpopulated R1 on the hall effect sensor is across V+ and OUT; perhaps to be used as a pull-up resistor if the hall effect sensor doesn't pull the line up on its own?
+- unpopulated R111 on the white PCB is THE SAME THING
+- 
+- A0 & A2 Pins
+- A0 and A2 are GPIO pins from the hilt's microcontroller. uncertain what they are for, but they are not connected to anything on the white PCB.
+- were they brought up to the white PCB for debugging purposes? or do they serve some other purpose? unknown at this time.
+- 
+- Labeled P1 and P2 connectors on Microcontroller PCB
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- Operation Notes
+- 
+- Hilt will shut off automatically after 2 minutes of inactivity, where inactivity means you're not swinging the blade enough for the hilt to detect it's being moved.
+- 
+- Blade and hilt connected by a single data wire. Blade is responsible for pulling this line HIGH, which the hilt detects to know that a blade is present.
+- Hilt will pull the data line LOW intermittently to send data (commands to turn on, off, flash, etc.) to the blade.
+- If the data line is kept high (via directly attaching it to 5V) the hilt does not change behavior.
+- If the data line is pulled low (via directly attaching it to GND) the hilt makes the "blade has been inserted/removed" noise and any attempt to power the hilt on (or off then on) results in the "no blade present" noise being made.
+- If data line goes high impedance (disconnected from everything) then after a few seconds the hilt assumes the blade is no longer present
+- 
+- Leaving blade plugged in while off reduces power consumption because LEDs in chassis do not come on after the blade has been shut off until after the blade is removed.
+- 
+- Hilt sends color command to blade while it's powered on every 500ms (ish)
+- 
+- 
+- How to Keep Blade Active Beyond 2 Minutes
+- Disconnect the data line after the blade has been powered on. This will block the power-off command from the hilt and the blade will remain on.
+- see: https://www.youtube.com/watch?v=2Meq0aUvAiI
+- 
+- Current Consumption or Why The Batteries Don't Last
+- These are measurements of just the hilt and do not take current consumption of the blade into account.
+- However, stock blades when powered off typically consume so little current that it's not worth considering.
+- 
+- Switch Position Crystal Present Blade Present Crystal Chamber LEDs Current Draw Notes
+- off no no off 0.03 mA
+- off -> on no no off 0.04 mA
+- off yes no blinking 40 mA
+- on yes no off 0.04 mA
+- on yes yes off 41 mA
+- on -> off yes yes off 0.05 mA
+- on -> auto off yes yes off 0.05 mA
+- on -> auto off -> off yes yes blinking 40 mA auto-off then switching off causes the LEDs to blink
+- off yes yes -> no blinking 40 mA
+- 
+- 
+- while testing multiple hilts, discovered one hilt that draws 1.5 mA when off instead of the 0.03 mA seen in other hilts
+- the 1.5 mA draw hilt would drain batteries much faster (just over 1 week if left off).
+- 
+- supply voltage below about 3.1V seems to prevent the hilt from powering on
+- the switch may need to be cycled a couple times to get it to ignite at that low a voltage; colors in blade and crystal chamber will not be correct (unless it's a red crystal)
+- 
+- Statements about battery life for AAA alkaline cells based on this datasheet from Duracell: https://www.duracell.com/wp-content/uploads/2020/02/MN24US1119.pdf
+- 
+- Battery Pack and Chassis Revision
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- Old chassis used a battery pack that contained a wider guide tab underneath where the red arrow is located. As such the guide channel is wider on an old chassis.
+- New battery packs can work with old chassis and vice versa, however they won't quite fit and you may have some difficulty in inserting and removing the battery pack.
+- 
+- How new is "new"? Change happened sometime between July 2022 and August 2023.
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 2025-06-01 00:00:00
+- A Deep Dive Into Reversing The Savi's Hilt Logic PCB I have a 2019 board that had a shorted C48
+- After replacing C48 it still does not respond.
+- Savi's workshop PCBs with a revision date of 2022-08-30 seem to have a flaw where they sometimes do not detect/read kyber crystals. If I remove the 5V regulator it does respond.
+- Changing the battery voltage can fix this issue. Why? That's what we're here to figure out by reversing the Savi's hilt logic PCB. Perhaps ripple from the 5V regulator destroyed C48 and is impacting the MCU?
+- 
+- the 2019 and 2022 boards use a different 5V boost converter. this boost converter is used ONLY for powering the EM4095 (RFID reader) IC
+- the pinouts of the two are different, with the enable/shutdown pin on 5 for the 2019 revision and 4 for the 2022 revision "Working" PCB Behavior
+- both shutdown lines go through R68 to the MCU at power on, current consumption goes to 0mA
+- if switch is detected, goes up to around 6mA and stays there a while.
+- 2022 revision has a diode, D1, placed between battery and Vin on the boost converter. if swtich remains on, after a few seconds, drops to 0mA
+- Some 2022 PCBs use a 4.7ohm resistor instead of a diode. If switch then turns off after it's at 0mA, it comes back up to 6mA
+- Is D1 present due to the new regulator? Does its datasheet require it?
+- 
+- 
+- 
+- 5V DC-DC BOOST SOT-23-6
+- Things to check:
+- 2019 version pinout (NM5VA) - VBAT goes to MCU via R69/C28 and R70 and C35, any ripple?
+- 1 - VIN/SW 6 - OUT - check C48, D12, C17, C43, C47
+- 2 - GND 5 - Enable (via R68)
+- 3 - FB 4 - GND
+- 
+- 
+- 2022 version pinout
+- 1 - SW 6 - N/C
+- 2 - GND 5 - VIN
+- 3 - FB 4 - Enable (via R68) 10uH inductor
+- 
+- 2022 boost converter is putting out 5V even when batt voltage is low.
+- but test unit can't detect kybers unless batt voltage is 4.5V or higher. why?
+- how could BATT voltage affect MCU's ability to read kyber crystal?
+- r50 is 1k
+- r66 is ~183k does MCU of an AREF that can directly monitor the battery and perhaps influences how digital signals from EM4095 operate?
+- r67 is 25k VBAT goes to R69 / C28 filter then into MCU
+- r68 is 10k VBAT also goes to R70 / C32 filter then into MCU
+- r75 is 100k
+- r77 is 1M R66 and R67 are used to program/set output of boost converter.
+- r84 is 1k
+- r90 is 2k Vout = 0.6 * (1 + (R1/R2))
+- r91 is 100k (Vout / 0.6) - 1 = R1/R2
+- r92 is 8k R1 = R2 * ((Vout / 0.6) - 1)
+- r93 is 10k
+- R67 is 25k
+- R66 is difficult to measure in circuit, but could be around 180K which would set the boost converter to 5V
+- 
+- EM4095
+- pins 2, 12, 13, 14 potentially connect to MCU
+- in read-only config, pin 12 connects to ground according to datasheet. but here pin 12 is controlled by MCU via Q8 and Q2 so ... hmm...
+- 
+- it's almost as if EM4095, when powered, goes into a default read mode
+- em4095 just... reads and outputs to MCU.
+- 
+- EM4095.14 (SHD) EM4095.13 (DEMOD_OUT) EM4095.12 (MOD)
+- SHD connected to 5V via R92 (8K) connects to MCU via R84 (1K) / R90 (2K) voltage divider connected to collector of Q8 (PNP transistor) EM4095.2 (RDY/CLK)
+- Q1 (NPN) drives pin 14 (SHD) on EM4095 basically 5V out of DEMOD_OUT becomes 3.3V for MCU emitter of q8 connected to 5v this pin is left floating; this is not shown as an option in the datasheet
+- Q1 emitter to GND when base of q8 pulled below 5V MOD goes HIGH otherwise it floats; there is no pulldown resistor on MOD this is normally used to tell the mcu that it can start reading DEMOD_OUT
+- Q1 base to MCU via R91 (100K) q8 base has 110K pullup (R93 (10K) + R75 (100K)) to 5V without this signal, the mcu must have some internal timer that it doesn't look at DEMOD_OUT until some fixed period after enabling the IC
+- q8 base pulled low by Q2 (via R93) em4095 IC is enabled via enablign the 5V boost converter and the SHD pin being pulled high.
+- 
+- R93 -> Q2 (NPN) collector
+- Q2 base -> R94 (100K) -> MCU
+- Q2 emitter to GND
+- Q2 lets MCU (3.3V) control Q8 (5V) to control MOD pin
+- 
+- since MOD is not just pulled to GND, in theory, savi's could send commands to em4905
+- (but almost certainly does not)
+- 
+- 
+- Oh Bother - I Fixed It
+- Found hilt worked at voltages over 4.49 volts. Other Misc Notes on the PCB
+- Replaced D11 with wire, the opposite became true. Blade Data -> D11 -> MCU
+- Put D11 back and it worked across all voltages. Blade data has 1M pulldown before D11
+- Tried to clean and straighten the soldering before reassembly and it stopped working again. why the diode? why the pull-down before D11?
+- Applied solder to a nearby cap for the boost converter that looked like it may not be connected and it started working again. unpopulated R78 would have put battery power on the data line. the diode would drop the voltage
+- Reassmbled and it now works fine. but with R78 unpopulated, i think D11 could just be a 0 ohm link
+- unless data coming from blade is at batt level....
+- My current thought is the 2022 revision has a lot going on in a small area. let's leave it.
+- The GND wires and D11 are right next to each other.
+- Earlier revisions gave more space to the ground and battery wires. jumper pads between ribbon cable connectors (labeled  'B4') would bypass MCU and permanently enable the 5V regulator
+- I wonder if the excees solder/flux in that area from soldering the GND wire could have been the root cause.
+- Maybe a connection was being made or not being made and the area just needed a cleanup.
+- Tin whiskers? Maybe... q4 is PNP, this provides power to the LEDs inside the top half of the chassis
+- Now I wait to find another broken hilt on eBay and hope it carries the same problem and I can be more careful in finding the solution. emitter is 3.3V, base via R50 (1k) to MCU; test point on connector side near label B1
+- collector to LED POWER on top chassis ribbon cable
+- 
+- C51 is across 5V and GND
+- 
+- Thoughts as of May 2025 on this issue
+- 
+- I wonder if the issue is delays in EM4095 startup due to perhaps delays in the boost converter startup.
+- Without the RDY/CLK pin connected to anything, the mcu must be using some fixed timing to know when to tell it to start reading a crystal.
+- If it's not ready, that command might be missed? Or if it's late to start, the full data may not be read by the time the MCU shuts the RFID reader off.
+- 
+- So what if we did jumper B4? That keeps the boost converter on at all times. Hmm...
+- I really need to scope/analyze the EM4095 lines, the DC-DC converter enable line, and see ... hmm...
+- 
+- I think we need to consider B4 the next time we have a hilt with this issue.
+- 
+- We could run a jumper across D11, examine whether or not it works, if not, jumper b4 and see if that fixes it.
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- Yeah. Sometimes the hall effect sensor is tilted back, away from the chassis, meaning a weak magnet will not be powerful enough to trigger it. :\
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- Operation Notes
+- If there's no blade and the hilt is in the on position, it keeps the 5V regulator on.
+- If there is no bladea nd the hilt is powered on, it goes into sleep mode after a few seconds.
