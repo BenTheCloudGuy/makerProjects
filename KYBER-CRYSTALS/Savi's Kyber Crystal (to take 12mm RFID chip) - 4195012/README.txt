@@ -1,0 +1,1 @@
+Savi's Kyber Crystal (to take 12mm RFID chip) by ThorTech on Thingiverse: https://www.thingiverse.com/thing:4195012
