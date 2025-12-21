@@ -1,0 +1,3 @@
+# Ignore all STL files in this project
+*.stl
+*.STL
