@@ -52,6 +52,6 @@ A comprehensive project for understanding and creating custom kyber crystals com
 - RFID programming guides (Proxmark3)
 - Community research and teardown galleries
 
-<img src="KYBER-CRYSTALS/STLS/kyber-crystal-jedi-crusader-pendant-model_files/Top/kyber-pendant-top.png" alt="Kyber Crystal" width="30%">
+<img src="KYBER-CRYSTALS/rdm6300.jpg" alt="Kyber Crystal" width="30%">
 
 [View Full Documentation →](KYBER-CRYSTALS/README.md)
