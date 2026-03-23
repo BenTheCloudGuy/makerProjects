@@ -1,466 +1,175 @@
 # Astromech Droid Hardware
 
-- 
-- *** THIS IS A WORK IN PROGRESS *** YouTube Videos BB Droid Current Draw
-- BB Head LED Mod: https://www.youtube.com/watch?v=A0AJl5ipgx0 Idle 13mA
-- How To Reset and Pair: https://www.youtube.com/watch?v=gKocbzvLSUg Making Sound 50mA
-- Low Battery Shutdown Circuit Mod: https://www.youtube.com/watch?v=KCyAfx2cFCk Moving / Motors 1A
-- Battery Status: https://www.youtube.com/watch?v=-CkDXRUWeeM Sleeping <20uA
-- 
-- 
-- BB-Series PCB BB-Series Audio Controller (GeneralPlus GPCD6TP270A or GPCD9TP340A)
-- 
-- Pin Net Purpose
-- IOD0 SPI_SI Personality Chip - Serial In
-- IOD1 SPI_SO Personality Chip - Serial Out
-- IOD2 SPI_SCK Personality Chip - Serial Clock
-- IOD3 SPI_CS Personality Chip - Chip Select
-- IOD4 SPI_DET Detect insertion of personality chip
-- IOD5 HEAD_LED_A Control LEDs in head
-- IOD6 HEAD_LED_B Control LEDs in head
-- 
-- IOC2 GP_MCLK Bluetooth Controller Serial Clock
-- IOC3 GP_SCLK GP Serial Clock
-- IOC4 GP_MO Bluetooth Controller Serial Data
-- IOC5 GP_SO GP Serial Data
--  IOC6 GP_REQ Bluetooth Controller Signal to GP
-- 
-- NOTE: pinout naming is based on schematics by Siddacious.
-- suspect the IOC pins are actually IOA and should have all their numbers incremented by 1
-- because datasheet for GPCD9TP states IOA1 = SDA and IO2 = SCK for programming
-- IOD names are likely correct based on IOD port the only port to support SPI
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- R-Series PCB
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- BD-Unit PCB
-- BD Units Audio Controller (U4A) Pinout
-- PIN Connection
-- 1.0 VPP
-- 2.0 VCC_33
-- 3.0 GND
-- 4.0 VCC
-- 5.0 MM_RESET (controlled by nRF.6 via Q8)
-- 6.0 ?? V3.3 DET
-- 7.0 nRF.5 nRF is the bluetooth controller
-- 8.0 nRF.4 these 5 pins are used for communication
-- 9.0 nRF.3 between the audio and bluetooth controllers
-- 10.0 nRF.2
-- 11.0 nRF.1
-- 12.0 VCC_33, C14
-- 13.0 GND
-- 14.0 LED1-G LEDn are the 4 LEDs on the back of the head
-- 15.0 LED1-R
-- 16.0 LED2-B
-- 17.0 LED2-G
-- 18.0 LED0-B
-- 19.0 LED0-G, SDA
-- 20.0 LED0-R, SCK
-- 21.0 LED1-B
-- 22.0 VCC_33
-- 23.0 GND
-- 24.0 ?? SICS
-- 25.0 R-EYE LED
-- 26.0 L-EYE LED
-- 27.0 LED2-R
-- 28.0 LED3-B
-- 29.0 LED3-G
-- 30.0 LED3-R
-- 31.0 GND
-- 32.0 SPK-
-- 33.0 LED+, VCC
-- 34.0 SPK+
-- 35.0 GND
-- 36.0 GND
-- SW (Star Wars*) Port
-- * SW technically stands for "Serial Wire debug"
-- 
-- BB-Series SW Port R-Series SW Port
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- Pinout, left-to-right: Pinout, left-to-right:
-- GND VCC
-- SWCLK SWDIO
-- SWDIO SWCLK
-- VCC GND
-- 
-- The serial wire debug port is an interface that can be used to program and debug the NRF51822 microcontroller.
-- 
-- R-Series Accessory Port
-- R-Seriess include an accessory port located on each leg. A blaster or thruster accessory can be installed into either leg. The connector is a DuPont-style 3-pin, 2.54mm pitch, female header.
-- When viewing the port, the pinout is as follows from left to right:
-- 
--  Label Purpose
-- DET a resistor between DET and GND identifies the presence and type of accessory. 4.7k = thruster, 10k = blaster.
-- GND ground
-- LED an LED placed between LED and GND will light up in sync with audio that is played while the accessory is active.
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- NOTE: tests show that only a thurster or blaster accessory is identified through this port. resistor values from 100 ohms to 10Mohms have been tried in an attempt to identify any possible unknown/unused accessories and none were found.
-- 
-- 
-- R-Series Leg Attachment Joint
-- This is the joint the leg plugs into. It has 5 pins, 3 of which go to the accessory port while the other two drive the motor in the leg.
-- 
-- This image is of the PCB inside the LEG. The orientation of the PCB is as if you were looking at the connector on the LEG.
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- Thus the pinout from the perspective of the LEG is:
-- LED+  M+
-- *   *
-- GND     M-
-- * DET  *
-- *
-- 
-- The pinout on the droid body would be horizontally flipped and looks like this:
-- M+  LED+
-- *   *
-- M-     GND
-- * DET  *
-- *
-- 
-- 
-- 
-- 
-- 
-- Schematics
-- Schematics for the droid PCBs have been reverse engineered by Siddacious and Russ. They have made their work available to everyone.
-- You can download these schematics through Siddacious' github account here: https://github.com/siddacious/SA-45
-- 
-- Note: there may be some errors in these schematics. we don't have access to the official schematics. instead these schematics were created
-- by attempting to document every trace (copper wire on the PCB) and every component each trace connects to. it is ridiculously tedious and
-- time consuming process. the work of Russ and Siddacious is greatly appreciated.
-- 
-- 
-- Tilt-Switch Wake-up Mod
-- For a demonstration and explanation of this mod, please watch this video: https://www.youtube.com/watch?v=iu8T0AD-TIE
-- 
-- !! NOTICE: This mod WILL NOT WORK with droids assembled after April 2024 !!
-- 
-- Galaxy's Edge droids will go to sleep after 5 minutes of inactivity.
-- To wake the droid up the power switch must be turned to the off position, then back to the on position.
-- For BB droids especially this can be a cumbersome task.
-- This mod allows for a ball/tilt switch to be used to reset the microcontroller inside the droid.
-- Thus a droid may be woken up by briefly tipping it upside down.
-- 
-- All that is needed is a ball or tilt switch such as an SW-520D which can be found on Amazon, eBay, aliexpress, and elsewhere.
-- 
-- Connect one pin of the tilt switch to GND and the other to the SWDIO pin of the NRF51822 microcontroller in the droid.
-- There is a "SW Port" conveniently located on the control board of both droids which provide easy access to both SWDIO and GND.
-- Only insert the leads of the switch a few millimeters into the holes before soldering. This will give you room to then bend the leads
-- to orient the switch properly.
-- The switch should be oriented in such a way that end with the leads is facing UP and the end without leads is facing DOWN when
-- the droid is standing upright. On BB droids this is done by bending the switch over, towards the microcontroller, such that the
-- body of the switch is parallel with the PCB.
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- R-Series Dome Connector Pinout
-- 
-- Head Module Connector The image below is the contact PCB inside the dome.
-- 1: HE_5V (Brown) The PCB is marked to show wich contacts connect to which pins.
-- 2: LED_R (Red) The markings are horizontally flipped from the pinout to the left
-- 3: LED_G (Orange) because this image is of the PCB from the top down, instead
-- 4: LED_B (Yellow) of the bottom-up orientation of the pinout given above.
-- 5: H_DET (Green)
-- 
-- 
-- Dome Connector; Looking at underside of dome
-- __   __
-- /  \_/  \      1: HE_5V
-- /  1   2  \     2: H_DET
-- |     3     |    3: LED_G (Middle (PSI Red)  LED)
-- \  4   5  /     4: LED_R (Right  (PSI Blue) LED)
-- \_______/      5: LED_B (Left   (Logic)    LED)
-- 
-- 
-- 
-- NOTES
-- H_DET and LED_R are connected via a 1K resistor inside dome
-- 
-- For R2 dome
-- LED_B = logic
-- LED_R = Blue PSI
-- LED_G = Red PSI
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- Compare the labels on this PCB to those of the brown, 5-pin connector on the R-Series control board given near the top of this sheet.
-- That brown connector will connect directly to the contacts that this PCB from the dome connects to.
-- 
-- 
-- R-Series Dome LED Operation
-- 
-- The R-Series PCB has a brown, 5-pin connetor (seen right).
-- The reverse PCB image seen up at the top shows the label for this connector.
-- From the orientation of this image, the pinout from left to right of the brown
-- connector is this:
-- 1.0 HE_5V
-- 2.0 LED_R
-- 3.0 LED_G
-- 4.0 LED_B
-- 5.0 H_DET
-- 
-- The three LED pins and the H_DET pin connect directly to the audio microcontroller on the PCB.
-- 
-- The HE_5V pin, which provides power to the dome, is controlled by the PNP transistor labeled Q6.
-- The base of Q6 connects to the audio microcontroller via a 1K resistor labeled R27.
-- 
-- The audio microcontroller enables power to the dome by pulling the base of Q6 low.
-- As audio plays, the LED pins are PWM'd to control the brightness of the LEDs.
-- 
-- If you wanted swap the blinking behavior of LEDs in the dome you could swap pins of the cable that connects
-- to the brown connector on the PCB.
-- 
-- The PNP transistor labeled 'Y2' is an SS8550 transistor. The pinout is provided below.
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- H_DET
-- R and C unit droids have a set of wires that provide power to the LEDs in the dome. There is an extra line, labeled "H_DET" on the controller PCB that also goes to the dome.
-- H_DET connects to the 5V power via 1k resistor. If H_DET is cut or blocked or disabled, there is no change in dome behavior. We have not seen domes with different resistor values.
-- My current thinking is H_DET is not used. Perhaps it's leftover from an early implementation or a planned implementation of some programming that would change droid behavior if the dome was missing.
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- There's also an unpopulated connector on the controller PCB labeled "Head_DET" which connects to the bluetooth module via (unpopulated) resistor R73.
-- I see this as further indication that there may have been plans to alter droid behavior (or block certain behavior, like dome movement) if a droid dome was missing (as the bluetooth module handles motor control).
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- Head_DET is, I believe, connected to P0.21 of the bluetooth (nRF51822) module.
-- 
-- 
-- Battery Voltage Notes
-- 9V okay
-- 8V okay
-- 7V pairing LED blinks, droid turns off
-- 
-- Auto Shutoff Timer
-- 5 minutes after last droid beacon is seen or there is activity from the remote control
-- 6 hours after last location beacon was encountered; these are typically only in Galaxy's Edge
-- 
-- Beacon Reaction Notes
-- A droid will react to the beacon of another droid by making a noise, flashing its lights, and moving its head. It will do this roughly every 2 minutes the beacon of the other droid is active.
-- However a droid will ignore (not react) to another droid beacon if it has encountered a location beacon within the last 2 hours.
-- Location beacons are typically found in Galaxy's Edge although it's possible to produce your own.
-- 
-- a droid that sees a location beacon will not go to sleep until 6 hours after it last sees a location beacon.,
-- a droid will see, but not react, to droid beacons that have certain non-standard affiliation values.
-- combine the last two items and you could craft a droid beacon that, when active, will keep the droid awake while the beacon is active, but the droid itself will remain silent.
-- 
-- Droid Motor H-Bridge IC
-- An H-Bridge is a circuit that allows you to change the direction of the flow of electricity.
-- For droids this is used to drive the wheel motors, allowing you to go forward and reverse by changing the flow of electricity through the wheel motors.
-- The h-bridge used in Galaxy's Edge droids is the AMTEK AM1037.
-- https://www.alldatasheet.com/datasheet-pdf/view/1424996/AMTEK/AM1037A.html
-- 
-- The h-bridge in droids is wired directly to the batteries (through the on-off switch and a PTC thermistor which acts as a current limiter/fuse).
-- 
-- The AM1037 has a maximum input voltage of 11V. The 6 AA batteries in a normal droid provides about 9V.
-- 
-- PCB Notes
-- NRF can put GP into RESET by pulling GP.RESET low, done by via Q1 (NPN) by setting P0.14 on NRF high.
-- The pot in BB units is used to for left/right motor trimming (so it drives straight) via AIN7/AIN7_CTRL
-- 
-- Battery Level Monitor
-- AIN4/AIN4_CTRL monitors battery level.
-- AIN4_CTRL goes HIGH enabling Q5 (NPN) to pull the base of Q4 (PNP) low. AIN4 = P0.03
-- Q4 connect VBAT to AIN4. AIN4_CTRL = P0.12
-- AIN4 has a voltage divider that is then used by nRF to detect battery level.
-- 
-- Battery Pack Mod?
-- Were one to try and mod the battery (say, 2 18650s) then this battery level circuit will need to be modified.
-- Probably change R25 from 47k to 51k (maybe 56k)
-- 
-- Or just use a buck/boost converter to create 9V from the 18650 battery pack.
-- 
-- Need to double-check the hardware. R-Series schematic shows R61 is the 47K resistor to change. But BB schematic shows its R25.
+> **THIS IS A WORK IN PROGRESS**
+
+## YouTube Videos
+
+- [BB Head LED Mod](https://www.youtube.com/watch?v=A0AJl5ipgx0)
+- [How To Reset and Pair](https://www.youtube.com/watch?v=gKocbzvLSUg)
+- [Low Battery Shutdown Circuit Mod](https://www.youtube.com/watch?v=KCyAfx2cFCk)
+- [Battery Status](https://www.youtube.com/watch?v=-CkDXRUWeeM)
+
+## BB Droid Current Draw
+
+| State | Current |
+|---|---|
+| Idle | 13mA |
+| Making Sound | 50mA |
+| Moving / Motors | 1A |
+| Sleeping | <20uA |
+
+## BB-Series PCB
+
+### BB-Series Audio Controller (GeneralPlus GPCD6TP270A or GPCD9TP340A)
+
+| Pin | Net | Purpose |
+|---|---|---|
+| IOD0 | SPI_SI | Personality Chip - Serial In |
+| IOD1 | SPI_SO | Personality Chip - Serial Out |
+| IOD2 | SPI_SCK | Personality Chip - Serial Clock |
+| IOD3 | SPI_CS | Personality Chip - Chip Select |
+| IOD4 | SPI_DET | Detect insertion of personality chip |
+| IOD5 | HEAD_LED_A | Control LEDs in head |
+| IOD6 | HEAD_LED_B | Control LEDs in head |
+| IOC2 | GP_MCLK | Bluetooth Controller Serial Clock |
+| IOC3 | GP_SCLK | GP Serial Clock |
+| IOC4 | GP_MO | Bluetooth Controller Serial Data |
+| IOC5 | GP_SO | GP Serial Data |
+| IOC6 | GP_REQ | Bluetooth Controller Signal to GP |
+
+> **Note:** Pinout naming is based on schematics by Siddacious. The IOC pins are suspected to actually be IOA with incremented numbers, because the GPCD9TP datasheet states IOA1 = SDA and IOA2 = SCK for programming. IOD names are likely correct since the IOD port is the only port to support SPI.
+
+## R-Series PCB
+
+*(R-Series PCB images)*
+
+## BD-Unit PCB
+
+### BD Units Audio Controller (U4A) Pinout
+
+| Pin | Connection |
+|---|---|
+| 1 | VPP |
+| 2 | VCC_33 |
+| 3 | GND |
+| 4 | VCC |
+| 5 | MM_RESET (controlled by nRF.6 via Q8) |
+| 6 | ?? V3.3 DET |
+| 7 | nRF.5 (nRF is the BLE controller; pins 7-11 are used for communication between audio and BLE controllers) |
+| 8 | nRF.4 |
+| 9 | nRF.3 |
+| 10 | nRF.2 |
+| 11 | nRF.1 |
+| 12 | VCC_33, C14 |
+| 13 | GND |
+| 14 | LED1-G (LEDn are the 4 LEDs on the back of the head) |
+| 15 | LED1-R |
+| 16 | LED2-B |
+| 17 | LED2-G |
+| 18 | LED0-B |
+| 19 | LED0-G, SDA |
+| 20 | LED0-R, SCK |
+| 21 | LED1-B |
+| 22 | VCC_33 |
+| 23 | GND |
+| 24 | ?? SICS |
+| 25 | R-EYE LED |
+| 26 | L-EYE LED |
+| 27 | LED2-R |
+| 28 | LED3-B |
+| 29 | LED3-G |
+| 30 | LED3-R |
+| 31 | GND |
+| 32 | SPK- |
+| 33 | LED+, VCC |
+| 34 | SPK+ |
+| 35 | GND |
+| 36 | GND |
+
+## SW (Serial Wire Debug) Port
+
+> *"SW" technically stands for "Serial Wire debug" (not Star Wars!)*
+
+The serial wire debug port is an interface that can be used to program and debug the NRF51822 microcontroller.
+
+### BB-Series SW Port Pinout (left to right)
+
+| Pin | Signal |
+|---|---|
+| 1 | GND |
+| 2 | SWCLK |
+| 3 | SWDIO |
+| 4 | VCC |
+
+### R-Series SW Port Pinout (left to right)
+
+| Pin | Signal |
+|---|---|
+| 1 | VCC |
+| 2 | SWDIO |
+| 3 | SWCLK |
+| 4 | GND |
+
+## R-Series Accessory Port
+
+R-Series droids include an accessory port on each leg. A blaster or thruster accessory can be installed into either leg. The connector is a DuPont-style 3-pin, 2.54mm pitch, female header.
+
+| Label | Purpose |
+|---|---|
+| DET | A resistor between DET and GND identifies the presence and type of accessory. 4.7k = thruster, 10k = blaster. |
+| GND | Ground |
+| LED | An LED placed between LED and GND will light up in sync with audio played while the accessory is active. |
+
+> **Note:** Tests show only thruster or blaster accessories are identified through this port. Resistor values from 100 ohms to 10M ohms were tried; no unknown/unused accessories were found.
+
+## R-Series Leg Attachment Joint
+
+This is the joint the leg plugs into. It has 5 pins: 3 go to the accessory port, 2 drive the motor.
+
+### Pinout from the LEG perspective:
+
+```
+LED+  M+
+ *   *
+GND     M-
+ * DET  *
+    *
+```
+
+### Pinout from the BODY perspective (horizontally flipped):
+
+```
+M+  LED+
+ *   *
+M-     GND
+ * DET  *
+    *
+```
+
+## Schematics
+
+Schematics for the droid PCBs have been reverse engineered by Siddacious and Russ. Download them from Siddacious' GitHub: <https://github.com/siddacious/SA-45>
+
+> **Note:** There may be errors in these schematics. Without access to official schematics, these were created by documenting every trace and component on the PCBs - a ridiculously tedious process. The work of Russ and Siddacious is greatly appreciated.
+
+## Tilt-Switch Wake-up Mod
+
+For a demonstration and explanation: <https://www.youtube.com/watch?v=iu8T0AD-TIE>
+
+> **NOTICE: This mod WILL NOT WORK with droids assembled after April 2024!**
+
+Galaxy's Edge droids go to sleep after 5 minutes of inactivity. To wake the droid, the power switch must be cycled off then on. For BB droids especially, this is cumbersome.
+
+This mod uses a ball/tilt switch to reset the microcontroller, allowing the droid to be woken by briefly tipping it upside down.
+
+### Parts Needed
+
+A ball or tilt switch such as an **SW-520D** (available on Amazon, eBay, AliExpress, etc.)
+
+### Installation
+
+1. Connect one pin of the tilt switch to **GND** and the other to the **SWDIO** pin of the NRF51822
+2. Use the "SW Port" on the control board for easy access to both SWDIO and GND
+3. Insert the switch leads only a few millimeters into the holes before soldering
+4. Bend the leads to orient the switch so the **end with leads faces UP** when the droid is upright
+5. On BB droids, bend the switch over towards the microcontroller so the body is parallel with the PCB
