@@ -14,20 +14,20 @@
 // ============================================================
 
 // --- Base plate ---
-base_thickness = 3;           // mm
+base_thickness = 5;           // mm
 
 // --- Breadboard metal plate ---
-bb_w = 237;                   // width (mm)
-bb_d = 205;                   // depth (mm)
+bb_w = 238;                   // width (mm)
+bb_d = 209;                   // depth (mm)
 
 // Breadboard corner screw holes
-bb_hole_dia    = 5;           // 5 mm diameter holes
-bb_hole_inset  = 5;           // hole center 5 mm from each edge
+bb_hole_dia    = 6;           // 5 mm diameter holes
+bb_hole_inset  = 6;           // hole center 5 mm from each edge
 bb_support_h   = 10;          // screw-support post height
 bb_support_dia = 12;          // post outer diameter (M5 + wall)
 
 // Perimeter retaining wall
-wall_h = 15;                  // wall height (from base top surface)
+wall_h = 20;                  // wall height (from base top surface)
 wall_t = 3;                   // wall thickness
 
 // --- Raspberry Pi 5 ---
@@ -83,11 +83,11 @@ boards_total_w = pi_env_w + board_gap + giga_env_w;
 boards_offset_x = (total_w - boards_total_w) / 2;
 
 // Envelope positions (bottom-left corners)
-pi_env_x = boards_offset_x;
-pi_env_y = bb_section_d + section_gap;
-
-giga_env_x = pi_env_x + pi_env_w + board_gap;
+giga_env_x = boards_offset_x;
 giga_env_y = bb_section_d + section_gap;
+
+pi_env_x = giga_env_x + giga_env_w + board_gap;
+pi_env_y = bb_section_d + section_gap;
 
 // Actual board origins (within envelopes)
 pi_x = pi_env_x + board_clearance;
