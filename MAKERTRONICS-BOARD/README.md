@@ -2,7 +2,7 @@
 
 A 3D-printable mounting base for the Makeronics 3220-Point Solderless Breadboard with integrated standoffs for a Raspberry Pi 5 and an Arduino GIGA R1 WiFi.
 
-![Render](image-1.png)
+![Render](img_buildplate.png)
 
 ## Overview
 
@@ -12,7 +12,7 @@ This project provides an OpenSCAD model (`makeronics_mount.scad`) that generates
 - Standoffs and mounting holes for a Raspberry Pi 5
 - Standoffs and mounting holes for an Arduino GIGA R1 WiFi
 
-The breadboard sits in a walled recess on top; the two dev boards mount side-by-side below it.
+The breadboard sits in a walled recess on top; the two dev boards mount side-by-side below it, rotated 180° with USB ports facing each other for easy cable routing between them. Boards are pushed to opposite edges for maximum spacing.
 
 ## Components
 
@@ -31,13 +31,13 @@ The breadboard sits in a walled recess on top; the two dev boards mount side-by-
 | Housing | ABS with metal contact clips |
 | Metal plate | 237 mm × 205 mm, black aluminum |
 
-![Breadboard photo](image.png)
+![Breadboard photo](img_makeronics.png)
 
 #### Mount Design
 
-- **Screw holes:** 4 corners, Ø5 mm, centered 5 mm from each edge
+- **Screw holes:** 4 corners, Ø5 mm, centered 8 mm from each edge
 - **Screw-support posts:** 10 mm tall, Ø12 mm
-- **Perimeter wall:** 15 mm tall, 3 mm thick — creates a recess for the metal plate
+- **Perimeter wall:** 20 mm tall, 3 mm thick — creates a recess for the metal plate
 - **Cable slots:** 15 mm wide pass-throughs on all four walls
 
 ### Raspberry Pi 5
@@ -50,6 +50,9 @@ The breadboard sits in a walled recess on top; the two dev boards mount side-by-
 | Hole inset | 3.5 mm from board edges |
 | Hole spacing | 58 mm (H) × 49 mm (V) |
 | Reserved envelope (10 mm clearance) | 105 mm × 76 mm |
+| Standoff style | Cone (16 mm base, 6 mm top, 8 mm tall) |
+| Orientation | Rotated 180° — USB-A ports face inward toward GIGA |
+| Position | Right side of base plate |
 
 **Mounting hole template** (top-left hole as origin):
 
@@ -65,50 +68,29 @@ The breadboard sits in a walled recess on top; the two dev boards mount side-by-
 | Spec | Value |
 |------|-------|
 | Board size | 101.60 mm × 53.34 mm |
-| Mounting holes | 4 × Ø3.20 mm |
-| Horizontal hole spacing | 74.93 mm center-to-center |
-| Left hole offset | 15.24 mm from left edge |
-| Top hole offset | 2.54 mm from top edge |
-| Bottom hole offset | 2.25 mm from bottom edge |
+| Mounting holes | 4 × Ø3.20 mm (asymmetric Mega form factor) |
+| Standoff style | Cone (16 mm base, 6 mm top, 8 mm tall) |
+| Orientation | Rotated 180° — USB-C/A ports face inward toward Pi |
+| Position | Left side of base plate |
 | Reserved envelope (10 mm clearance) | 122 mm × 74 mm |
 
-**Mounting hole template** (board top-left corner as origin):
+**Mounting hole template** (board origin, bottom-left corner, USB on left):
 
-| Hole | X (mm) | Y (mm) |
-|------|--------|--------|
-| Top-left | 15.24 | 2.54 |
-| Top-right | 90.17 | 2.54 |
-| Bottom-left | 15.24 | 51.09 |
-| Bottom-right | 90.17 | 51.09 |
+| Hole | X (mm) | Y (mm) | Notes |
+|------|--------|--------|-------|
+| Bottom-left | 13.97 | 2.54 | Near USB |
+| Bottom-right | 96.52 | 2.54 | Far end |
+| Top-left | 15.24 | 50.80 | Near USB |
+| Top-right | 90.17 | 50.80 | Far end |
 
-> **Note:** The Arduino GIGA R1 mechanical drawing has an irregular outline. Verify hole locations on the physical board before drilling.
-
-## Layout
-
-```
-┌─────────────────────────────────┐
-│                                 │
-│   Breadboard Recess             │
-│   237 × 205 mm                  │
-│   (with 15 mm perimeter wall)   │
-│                                 │
-├────────────┬──┬─────────────────┤
-│            │  │                 │
-│  Pi 5      │  │  GIGA R1 WiFi  │
-│  105 × 76  │  │  122 × 74      │
-│            │  │                 │
-└────────────┴──┴─────────────────┘
-```
-
-Dimensions shown include 10 mm clearance envelopes.
+> **Note:** The Mega form-factor holes are NOT rectangular — the X offsets differ between the top and bottom rows. This is derived from the official Arduino Eagle PCB files.
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `makeronics_mount.scad` | OpenSCAD source model |
-| `makeronics_mount.stl` | Generated STL for 3D printing |
-| `notes.md` | Detailed reference notes and measurements |
+| `STL/makeronics_mount.stl` | Generated STL for 3D printing |
 
 ## Building
 
@@ -126,13 +108,16 @@ Dimensions shown include 10 mm clearance envelopes.
 openscad -o makeronics_mount.stl makeronics_mount.scad
 ```
 
-## Printing Recommendations
+## Printing Summary
 
 - **Material:** PLA or PETG
+- **Total:** 174.32 m / 553.47 g
 - **Layer height:** 0.2 mm
-- **Infill:** 20–30%
+- **Infill:** 100%
 - **Supports:** Not required (flat base design)
 - **Orientation:** Print flat (base down)
+- **Estimated cost:** ~$13.83
+- **Estimated time:** ~7h 40m
 
 ## Hardware
 

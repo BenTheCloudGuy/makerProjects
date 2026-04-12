@@ -2,27 +2,25 @@
  * Makeronics Breadboard Mount
  *
  * Mounting base for:
- *   - Makeronics 3220-Point Solderless Breadboard (237 x 205 mm metal plate)
- *   - Raspberry Pi 5 (85 x 56 mm)
- *   - Arduino GIGA R1 WiFi (101.60 x 53.34 mm)
- *
- * Layout: Breadboard recess on top, Pi 5 and GIGA R1 side-by-side below.
+ *   - Makeronics 3220-Point Solderless Breadboard
+ *   - Raspberry Pi 5 
+ *   - Arduino GIGA R1 WiFi
  */
 
 // ============================================================
-// PARAMETERS
+//         VARIABLES FOR BASE PLATE AND COMPONENTS
 // ============================================================
 
 // --- Base plate ---
-base_thickness = 5;           // mm
+base_thickness = 5;           // base plate thickness (mm)
 
 // --- Breadboard metal plate ---
 bb_w = 238;                   // width (mm)
 bb_d = 209;                   // depth (mm)
 
 // Breadboard corner screw holes
-bb_hole_dia    = 6;           // 5 mm diameter holes
-bb_hole_inset  = 6;           // hole center 5 mm from each edge
+bb_hole_dia    = 5;           // 5 mm diameter holes (ie M5 Screw)
+bb_hole_inset  = 8;           // hole center 8 mm from each edge
 bb_support_h   = 10;          // screw-support post height
 bb_support_dia = 12;          // post outer diameter (M5 + wall)
 
@@ -33,7 +31,7 @@ wall_t = 3;                   // wall thickness
 // --- Raspberry Pi 5 ---
 pi_w          = 85;
 pi_d          = 56;
-pi_hole_dia   = 3.0;         // M3 mounting holes
+pi_hole_dia   = 5;           // M3 mounting holes
 pi_hole_inset = 3.5;         // hole inset from board edges
 pi_h_spacing  = 58;          // horizontal hole center-to-center
 pi_v_spacing  = 49;          // vertical hole center-to-center
@@ -44,13 +42,13 @@ pi_standoff_od = 6;          // standoff outer diameter
 giga_w          = 101.60;
 giga_d          = 53.34;
 giga_hole_dia   = 3.2;       // Ø3.20 mm mounting holes
-// 4 corner mounting holes derived from mechanical drawing
-// Left holes at 15.24 mm from left, right holes at 15.24 + 74.93 = 90.17 mm
-// Top holes at 2.54 mm from top, bottom holes at 53.34 - 2.25 = 51.09 mm
-giga_hole1 = [15.24, 2.54];                    // top-left
-giga_hole2 = [15.24 + 74.93, 2.54];            // top-right
-giga_hole3 = [15.24, giga_d - 2.25];           // bottom-left
-giga_hole4 = [15.24 + 74.93, giga_d - 2.25];   // bottom-right
+// Mega form-factor mounting holes (from Arduino Eagle PCB files).
+// NOTE: the 4 outer holes are NOT rectangular — X offsets differ per side.
+// Origin = bottom-left corner of PCB, USB connector on left.
+giga_hole1 = [13.97,  2.54];                   // bottom-left  (near USB)
+giga_hole2 = [96.52,  2.54];                   // bottom-right (far end)
+giga_hole3 = [15.24, 50.80];                   // top-left     (near USB)
+giga_hole4 = [90.17, 50.80];                   // top-right    (far end)
 giga_standoff_h  = 8;
 giga_standoff_od = 6;
 
@@ -60,7 +58,7 @@ section_gap     = 10;         // gap between breadboard section and boards
 board_gap       = 5;          // gap between Pi and GIGA envelopes
 
 // ============================================================
-// COMPUTED LAYOUT
+//                     LAYOUT OF STUFF
 // ============================================================
 
 // Breadboard section outer dimensions (including walls)
@@ -89,18 +87,29 @@ giga_env_y = bb_section_d + section_gap;
 pi_env_x = giga_env_x + giga_env_w + board_gap;
 pi_env_y = bb_section_d + section_gap;
 
-// Actual board origins (within envelopes)
-pi_x = pi_env_x + board_clearance;
-pi_y = pi_env_y + (boards_row_d - pi_d) / 2;
+// Board origins — GIGA LEFT (rotated 180°), Pi RIGHT (rotated 180°)
+// GIGA rotated: USB now on right edge, facing Pi
+// Pi rotated: USB now on left edge, facing GIGA
+// Inset each board so cone bases (radius = standoff_h) don't overhang the plate
+cone_r = pi_standoff_h;   // 8 mm — same for both boards
 
-giga_x = giga_env_x + board_clearance;
-giga_y = giga_env_y + (boards_row_d - giga_d) / 2;
+// GIGA: nearest rotated hole to board edge is 5.08 mm (x) and 2.54 mm (y)
+giga_inset_x = cone_r - 5.08;                                      // ~2.92 mm
+giga_inset_y = cone_r - 2.54;                                      // ~5.46 mm
+giga_x = giga_inset_x;                                             // near left edge
+giga_y = total_d - giga_d - giga_inset_y;                          // near bottom edge
+
+// Pi: nearest rotated hole to board edge is 3.5 mm (both axes)
+pi_inset_x = cone_r - pi_hole_inset;                               // 4.5 mm
+pi_inset_y = cone_r - pi_hole_inset;                               // 4.5 mm
+pi_x   = total_w - pi_w - pi_inset_x;                              // near right edge
+pi_y   = total_d - pi_d - pi_inset_y;                              // near bottom edge
 
 // Resolution
 $fn = 48;
 
 // ============================================================
-// MODULES
+//               HERE IS WHERE THE FUN BEGINS
 // ============================================================
 
 module base_plate() {
@@ -153,28 +162,43 @@ module standoff(height, od, hole_dia) {
     }
 }
 
+module cone_standoff(height, top_od, hole_dia) {
+    // Cone-shaped mount: base diameter = 2 * height (as wide as tall)
+    base_dia = 2 * height;
+    difference() {
+        cylinder(h = height, d1 = base_dia, d2 = top_od);
+        translate([0, 0, -1])
+            cylinder(h = height + 2, d = hole_dia);
+    }
+}
+
 module pi_standoffs() {
-    // Raspberry Pi 5: 4 mounting holes
+    // Raspberry Pi 5: 4 mounting holes (rotated 180°, USB-A now on left edge)
     pi_holes = [
-        [pi_hole_inset, pi_hole_inset],
-        [pi_hole_inset + pi_h_spacing, pi_hole_inset],
-        [pi_hole_inset, pi_hole_inset + pi_v_spacing],
-        [pi_hole_inset + pi_h_spacing, pi_hole_inset + pi_v_spacing]
+        [pi_w - pi_hole_inset, pi_d - pi_hole_inset],
+        [pi_w - pi_hole_inset - pi_h_spacing, pi_d - pi_hole_inset],
+        [pi_w - pi_hole_inset, pi_d - pi_hole_inset - pi_v_spacing],
+        [pi_w - pi_hole_inset - pi_h_spacing, pi_d - pi_hole_inset - pi_v_spacing]
     ];
 
     for (h = pi_holes) {
         translate([pi_x + h[0], pi_y + h[1], base_thickness])
-            standoff(pi_standoff_h, pi_standoff_od, pi_hole_dia);
+            cone_standoff(pi_standoff_h, pi_standoff_od, pi_hole_dia);
     }
 }
 
 module giga_standoffs() {
-    // Arduino GIGA R1 WiFi: 4 corner mounting holes
-    giga_holes = [giga_hole1, giga_hole2, giga_hole3, giga_hole4];
+    // Arduino GIGA R1 WiFi: 4 mounting holes (rotated 180°, USB now on right edge)
+    giga_holes_rotated = [
+        [giga_w - giga_hole1[0], giga_d - giga_hole1[1]],
+        [giga_w - giga_hole2[0], giga_d - giga_hole2[1]],
+        [giga_w - giga_hole3[0], giga_d - giga_hole3[1]],
+        [giga_w - giga_hole4[0], giga_d - giga_hole4[1]]
+    ];
 
-    for (h = giga_holes) {
+    for (h = giga_holes_rotated) {
         translate([giga_x + h[0], giga_y + h[1], base_thickness])
-            standoff(giga_standoff_h, giga_standoff_od, giga_hole_dia);
+            cone_standoff(giga_standoff_h, giga_standoff_od, giga_hole_dia);
     }
 }
 
@@ -213,30 +237,6 @@ module cable_slots() {
         cube([slot_depth + 2, slot_w, slot_h + 1]);
 }
 
-// ============================================================
-// LABELS (engraved text)
-// ============================================================
-
-module labels() {
-    label_depth = 0.8;
-
-    // "Pi 5" label
-    translate([pi_x + pi_w/2, pi_y - 5, base_thickness + label_depth])
-        rotate([0, 180, 0])
-            linear_extrude(height = label_depth + 0.1)
-                text("Pi 5", size = 5, halign = "center", valign = "center");
-
-    // "GIGA R1" label
-    translate([giga_x + giga_w/2, giga_y - 5, base_thickness + label_depth])
-        rotate([0, 180, 0])
-            linear_extrude(height = label_depth + 0.1)
-                text("GIGA R1", size = 5, halign = "center", valign = "center");
-}
-
-// ============================================================
-// ASSEMBLY
-// ============================================================
-
 difference() {
     union() {
         // Base slab
@@ -255,15 +255,6 @@ difference() {
         board_outline(giga_w, giga_d, giga_x, giga_y);
     }
 
-    // Subtract cable slots and labels
+    // Subtract cable slots
     cable_slots();
-    labels();
 }
-
-// ============================================================
-// DIMENSIONS ECHO (for verification)
-// ============================================================
-echo(str("Total base: ", total_w, " x ", total_d, " x ", base_thickness, " mm"));
-echo(str("Breadboard section: ", bb_section_w, " x ", bb_section_d, " mm"));
-echo(str("Pi 5 origin: (", pi_x, ", ", pi_y, ")"));
-echo(str("GIGA R1 origin: (", giga_x, ", ", giga_y, ")"));
